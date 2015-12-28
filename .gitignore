@@ -22,9 +22,9 @@ test.js
 **/*.dylib
 **/*.so
 **/*.old
-libbitcoind
+libpaycoind
 **/*.files
 **/*.config
 **/*.creator
-libbitcoind.includes
+libpaycoind.includes
 *.log

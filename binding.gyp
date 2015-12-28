@@ -1,15 +1,15 @@
 {
   'targets': [{
-    'target_name': 'bitcoindjs',
+    'target_name': 'paycoindjs',
     'include_dirs' : [
       '<!(node -e "require(\'nan\')")',
       '/usr/include/boost',
       '/usr/local/include',
-      './libbitcoind/src/leveldb/include',
-      './libbitcoind/src',
+      './libpaycoind/src/leveldb/include',
+      './libpaycoind/src',
     ],
     'sources': [
-      './src/bitcoindjs.cc',
+      './src/paycoindjs.cc',
     ],
     'conditions': [
         ['OS=="mac"', {

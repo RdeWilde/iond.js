@@ -1,13 +1,13 @@
 From 05084f2a640b862132588b322461ec8e13058fc3 Mon Sep 17 00:00:00 2001
 From: Chris Kleeschulte <chrisk@bitpay.com>
 Date: Mon, 13 Jul 2015 12:49:30 -0400
-Subject: [PATCH] libbitcoind
+Subject: [PATCH] libpaycoind
 
 ---
  config_me.sh         |  1 +
  configure.ac         | 37 ++++++++++++++++++++++++++++++++-----
  src/Makefile.am      | 42 ++++++++++++++++++++++++++++++++++--------
- src/bitcoind.cpp     |  6 ++++++
+ src/paycoind.cpp     |  6 ++++++
  src/init.h           |  5 +++++
  src/leveldb/Makefile |  6 +++++-
  src/leveldbwrapper.h | 12 ++++++++++++
@@ -31,7 +31,7 @@ index 37fe47e..27a9b9a 100644
 
 +AC_ARG_ENABLE([daemonlib],
 +  [AS_HELP_STRING([--enable-daemonlib],
-+  [compile all of bitcoind as a library (default is no)])],
++  [compile all of paycoind as a library (default is no)])],
 +  [use_daemonlib=$enableval],
 +  [use_daemonlib=no])
 +
@@ -119,12 +119,12 @@ index 1c2f770..632f608 100644
 
  BITCOIN_CONFIG_INCLUDES=-I$(builddir)/config
 @@ -49,16 +54,16 @@ BITCOIN_INCLUDES += $(BDB_CPPFLAGS)
- EXTRA_LIBRARIES += libbitcoin_wallet.a
+ EXTRA_LIBRARIES += libpaycoin_wallet.a
  endif
 
 -if BUILD_BITCOIN_LIBS
--lib_LTLIBRARIES = libbitcoinconsensus.la
--LIBBITCOIN_CONSENSUS=libbitcoinconsensus.la
+-lib_LTLIBRARIES = libpaycoinconsensus.la
+-LIBBITCOIN_CONSENSUS=libpaycoinconsensus.la
 -else
 -LIBBITCOIN_CONSENSUS=
 -endif
@@ -134,74 +134,74 @@ index 1c2f770..632f608 100644
  TESTS =
 
 +if BUILD_BITCOIN_LIBS
-+lib_LTLIBRARIES += libbitcoinconsensus.la
-+LIBBITCOIN_CONSENSUS += libbitcoinconsensus.la
++lib_LTLIBRARIES += libpaycoinconsensus.la
++LIBBITCOIN_CONSENSUS += libpaycoinconsensus.la
 +endif
 +
 +if !ENABLE_DAEMONLIB
  if BUILD_BITCOIND
-   bin_PROGRAMS += bitcoind
+   bin_PROGRAMS += paycoind
  endif
 @@ -66,6 +71,9 @@ endif
  if BUILD_BITCOIN_UTILS
-   bin_PROGRAMS += bitcoin-cli bitcoin-tx
+   bin_PROGRAMS += paycoin-cli paycoin-tx
  endif
 +else
-+lib_LTLIBRARIES += libbitcoind.la
++lib_LTLIBRARIES += libpaycoind.la
 +endif
 
  .PHONY: FORCE
- # bitcoin core #
+ # paycoin core #
 @@ -169,8 +177,9 @@ obj/build.h: FORCE
  	@$(MKDIR_P) $(builddir)/obj
  	@$(top_srcdir)/share/genbuild.sh $(abs_top_builddir)/src/obj/build.h \
  	  $(abs_top_srcdir)
--libbitcoin_util_a-clientversion.$(OBJEXT): obj/build.h
+-libpaycoin_util_a-clientversion.$(OBJEXT): obj/build.h
 
-+libbitcoin_util_a-clientversion.$(OBJEXT): obj/build.h
++libpaycoin_util_a-clientversion.$(OBJEXT): obj/build.h
 +clientversion.cpp: obj/build.h
- # server: shared between bitcoind and bitcoin-qt
- libbitcoin_server_a_CPPFLAGS = $(BITCOIN_INCLUDES) $(MINIUPNPC_CPPFLAGS)
- libbitcoin_server_a_SOURCES = \
-@@ -309,9 +318,18 @@ nodist_libbitcoin_util_a_SOURCES = $(srcdir)/obj/build.h
- bitcoind_SOURCES = bitcoind.cpp
- bitcoind_CPPFLAGS = $(BITCOIN_INCLUDES)
- bitcoind_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
-+libbitcoind_la_SOURCES = bitcoind.cpp
-+libbitcoind_la_SOURCES += $(libbitcoin_util_a_SOURCES)
-+libbitcoind_la_SOURCES += $(libbitcoin_univalue_a_SOURCES)
-+libbitcoind_la_SOURCES += $(libbitcoin_crypto_a_SOURCES)
-+libbitcoind_la_SOURCES += $(libbitcoin_common_a_SOURCES)
-+libbitcoind_la_SOURCES += $(libbitcoin_server_a_SOURCES)
-+libbitcoind_la_SOURCES += $(crypto_libbitcoin_crypto_a_SOURCES)
-+libbitcoind_la_SOURCES += $(univalue_libbitcoin_univalue_a_SOURCES)
+ # server: shared between paycoind and paycoin-qt
+ libpaycoin_server_a_CPPFLAGS = $(BITCOIN_INCLUDES) $(MINIUPNPC_CPPFLAGS)
+ libpaycoin_server_a_SOURCES = \
+@@ -309,9 +318,18 @@ nodist_libpaycoin_util_a_SOURCES = $(srcdir)/obj/build.h
+ paycoind_SOURCES = paycoind.cpp
+ paycoind_CPPFLAGS = $(BITCOIN_INCLUDES)
+ paycoind_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
++libpaycoind_la_SOURCES = paycoind.cpp
++libpaycoind_la_SOURCES += $(libpaycoin_util_a_SOURCES)
++libpaycoind_la_SOURCES += $(libpaycoin_univalue_a_SOURCES)
++libpaycoind_la_SOURCES += $(libpaycoin_crypto_a_SOURCES)
++libpaycoind_la_SOURCES += $(libpaycoin_common_a_SOURCES)
++libpaycoind_la_SOURCES += $(libpaycoin_server_a_SOURCES)
++libpaycoind_la_SOURCES += $(crypto_libpaycoin_crypto_a_SOURCES)
++libpaycoind_la_SOURCES += $(univalue_libpaycoin_univalue_a_SOURCES)
 
  if TARGET_WINDOWS
- bitcoind_SOURCES += bitcoind-res.rc
-+libbitcoind_la_SOURCES += bitcoind-res.rc
+ paycoind_SOURCES += paycoind-res.rc
++libpaycoind_la_SOURCES += paycoind-res.rc
  endif
 
- bitcoind_LDADD = \
+ paycoind_LDADD = \
 @@ -328,7 +346,15 @@ if ENABLE_WALLET
- bitcoind_LDADD += libbitcoin_wallet.a
+ paycoind_LDADD += libpaycoin_wallet.a
  endif
 
 +MEMOBJ = helpers/memenv/memenv.lo
 +$(MEMOBJ):
 +	@echo "Building the Memenv shared library..." && $(MAKE) -C ./leveldb $@
 +
- bitcoind_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS)
-+libbitcoind_la_LIBADD = $(BOOST_LIBS) $(SSL_LIBS) $(LIBSECP256K1) $(CRYPTO_LIBS) leveldb/$(MEMOBJ)
-+libbitcoind_la_CPPFLAGS = $(BITCOIN_INCLUDES)
-+libbitcoind_la_LDFLAGS = -lleveldb -L./leveldb $(RELDFLAGS) -no-undefined
-+libbitcoind_la_DEPENDENCIES = $(LIBSECP256K1) LIBLEVELDB_SHARED $(MEMOBJ)
+ paycoind_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS)
++libpaycoind_la_LIBADD = $(BOOST_LIBS) $(SSL_LIBS) $(LIBSECP256K1) $(CRYPTO_LIBS) leveldb/$(MEMOBJ)
++libpaycoind_la_CPPFLAGS = $(BITCOIN_INCLUDES)
++libpaycoind_la_LDFLAGS = -lleveldb -L./leveldb $(RELDFLAGS) -no-undefined
++libpaycoind_la_DEPENDENCIES = $(LIBSECP256K1) LIBLEVELDB_SHARED $(MEMOBJ)
  #
 
- # bitcoin-cli binary #
-diff --git a/src/bitcoind.cpp b/src/bitcoind.cpp
+ # paycoin-cli binary #
+diff --git a/src/paycoind.cpp b/src/paycoind.cpp
 index cce687a..0f162ff 100644
---- a/src/bitcoind.cpp
-+++ b/src/bitcoind.cpp
+--- a/src/paycoind.cpp
++++ b/src/paycoind.cpp
 @@ -33,6 +33,10 @@
 
  static bool fDaemon;

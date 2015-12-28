@@ -5,7 +5,7 @@
 
 var chai = require('chai');
 var bitcore = require('bitcore');
-var bitcoind;
+var paycoind;
 
 /* jshint unused: false */
 var should = chai.should();
@@ -22,21 +22,21 @@ describe('Basic Functionality', function() {
 
   before(function(done) {
     this.timeout(30000);
-    bitcoind = require('../')({
-      directory: process.env.BITCOINDJS_DIR || '~/.bitcoin',
+    paycoind = require('../')({
+      directory: process.env.BITCOINDJS_DIR || '~/.paycoin',
     });
 
-    bitcoind.on('error', function(err) {
-      bitcoind.log('error="%s"', err.message);
+    paycoind.on('error', function(err) {
+      paycoind.log('error="%s"', err.message);
     });
 
-    bitcoind.on('open', function(status) {
-      bitcoind.log('status="%s"', status);
+    paycoind.on('open', function(status) {
+      paycoind.log('status="%s"', status);
     });
 
-    console.log('Waiting for Bitcoin Core to initialize...');
+    console.log('Waiting for Paycoin Core to initialize...');
 
-    bitcoind.on('ready', function() {
+    paycoind.on('ready', function() {
       done();
     });
 
@@ -44,7 +44,7 @@ describe('Basic Functionality', function() {
 
   after(function(done) {
     this.timeout(20000);
-    bitcoind.stop(function(err, result) {
+    paycoind.stop(function(err, result) {
       done();
     });
   });
@@ -54,7 +54,7 @@ describe('Basic Functionality', function() {
       var tx = bitcore.Transaction();
       tx.fromString(data);
       it('for tx ' + tx.hash, function(done) {
-        bitcoind.getTransaction(tx.hash, true, function(err, response) {
+        paycoind.getTransaction(tx.hash, true, function(err, response) {
           if (err) {
             throw err;
           }
@@ -68,14 +68,14 @@ describe('Basic Functionality', function() {
   describe('determine if outpoint is unspent/spent', function() {
     spentData.forEach(function(data) {
       it('for spent txid ' + data.txid + ' and output ' + data.outputIndex, function() {
-        var spent = bitcoind.isSpent(data.txid, data.outputIndex, true);
+        var spent = paycoind.isSpent(data.txid, data.outputIndex, true);
         spent.should.equal(true);
       });
     });
 
     unspentData.forEach(function(data) {
       it('for unspent txid ' + data.txid + ' and output ' + data.outputIndex, function() {
-        var spent = bitcoind.isSpent(data.txid, data.outputIndex, true);
+        var spent = paycoind.isSpent(data.txid, data.outputIndex, true);
         spent.should.equal(false);
       });
     });
@@ -86,7 +86,7 @@ describe('Basic Functionality', function() {
     blockData.forEach(function(data) {
       var block = bitcore.Block.fromString(data);
       it('block ' + block.hash, function(done) {
-        bitcoind.getBlock(block.hash, function(err, response) {
+        paycoind.getBlock(block.hash, function(err, response) {
           assert(response.toString('hex') === data, 'incorrect block data for ' + block.hash);
           done();
         });
@@ -105,7 +105,7 @@ describe('Basic Functionality', function() {
 
     knownHeights.forEach(function(data) {
       it('block at height ' + data[0], function(done) {
-        bitcoind.getBlock(data[0], function(err, response) {
+        paycoind.getBlock(data[0], function(err, response) {
           if (err) {
             throw err;
           }

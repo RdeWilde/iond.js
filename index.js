@@ -1,1 +1,1 @@
-module.exports = require('./lib/bitcoind.js');
+module.exports = require('./lib/paycoind.js');

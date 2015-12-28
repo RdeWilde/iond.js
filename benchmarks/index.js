@@ -1,15 +1,15 @@
 'use strict';
 
 var benchmark = require('benchmark');
-var bitcoin = require('bitcoin');
+var paycoin = require('paycoin');
 var async = require('async');
 var maxTime = 20;
 
-console.log('Benchmarking Bitcoind.js native interface versus Bitcoind JSON RPC interface');
+console.log('Benchmarking Paycoind.js native interface versus Paycoind JSON RPC interface');
 console.log('----------------------------------------------------------------------');
 
 // To run the benchmarks a fully synced Bitcore Core directory is needed. The RPC comands
-// can be modified to match the settings in bitcoin.conf.
+// can be modified to match the settings in paycoin.conf.
 
 var fixtureData = {
   blockHashes: [
@@ -26,27 +26,27 @@ var fixtureData = {
   ]
 };
 
-var bitcoind = require('../')({
-  directory: '~/.bitcoin',
+var paycoind = require('../')({
+  directory: '~/.paycoin',
   testnet: true
 });
 
-bitcoind.on('error', function(err) {
-  bitcoind.log('error="%s"', err.message);
+paycoind.on('error', function(err) {
+  paycoind.log('error="%s"', err.message);
 });
 
-bitcoind.on('open', function(status) {
-  bitcoind.log('status="%s"', status);
+paycoind.on('open', function(status) {
+  paycoind.log('status="%s"', status);
 });
 
-bitcoind.on('ready', function() {
+paycoind.on('ready', function() {
 
-  bitcoind.log('status="%s"', 'chaintip ready.');
+  paycoind.log('status="%s"', 'chaintip ready.');
 
-  var client = new bitcoin.Client({
+  var client = new paycoin.Client({
     host: 'localhost',
     port: 18332,
-    user: 'bitcoin',
+    user: 'paycoin',
     pass: 'local321'
   });
 
@@ -57,12 +57,12 @@ bitcoind.on('ready', function() {
       var hashesLength = fixtureData.blockHashes.length;
       var txLength = fixtureData.txHashes.length;
 
-      function bitcoindGetBlockNative(deffered) {
+      function paycoindGetBlockNative(deffered) {
         if (c >= hashesLength) {
           c = 0;
         }
         var hash = fixtureData.blockHashes[c];
-        bitcoind.getBlock(hash, function(err, block) {
+        paycoind.getBlock(hash, function(err, block) {
           if (err) {
             throw err;
           }
@@ -71,7 +71,7 @@ bitcoind.on('ready', function() {
         c++;
       }
 
-      function bitcoindGetBlockJsonRpc(deffered) {
+      function paycoindGetBlockJsonRpc(deffered) {
         if (c >= hashesLength) {
           c = 0;
         }
@@ -85,12 +85,12 @@ bitcoind.on('ready', function() {
         c++;
       }
 
-      function bitcoinGetTransactionNative(deffered) {
+      function paycoinGetTransactionNative(deffered) {
         if (c >= txLength) {
           c = 0;
         }
         var hash = fixtureData.txHashes[c];
-        bitcoind.getTransaction(hash, true, function(err, tx) {
+        paycoind.getTransaction(hash, true, function(err, tx) {
           if (err) {
             throw err;
           }
@@ -99,7 +99,7 @@ bitcoind.on('ready', function() {
         c++;
       }
 
-      function bitcoinGetTransactionJsonRpc(deffered) {
+      function paycoinGetTransactionJsonRpc(deffered) {
         if (c >= txLength) {
           c = 0;
         }
@@ -115,22 +115,22 @@ bitcoind.on('ready', function() {
 
       var suite = new benchmark.Suite();
 
-      suite.add('bitcoind getblock (native)', bitcoindGetBlockNative, {
+      suite.add('paycoind getblock (native)', paycoindGetBlockNative, {
         defer: true,
         maxTime: maxTime
       });
 
-      suite.add('bitcoind getblock (json rpc)', bitcoindGetBlockJsonRpc, {
+      suite.add('paycoind getblock (json rpc)', paycoindGetBlockJsonRpc, {
         defer: true,
         maxTime: maxTime
       });
 
-      suite.add('bitcoind gettransaction (native)', bitcoinGetTransactionNative, {
+      suite.add('paycoind gettransaction (native)', paycoinGetTransactionNative, {
         defer: true,
         maxTime: maxTime
       });
 
-      suite.add('bitcoind gettransaction (json rpc)', bitcoinGetTransactionJsonRpc, {
+      suite.add('paycoind gettransaction (json rpc)', paycoinGetTransactionJsonRpc, {
         defer: true,
         maxTime: maxTime
       });
@@ -148,7 +148,7 @@ bitcoind.on('ready', function() {
     }
   ], function(err) {
     console.log('Finished');
-    bitcoind.stop();
+    paycoind.stop();
     process.exit();
   });
 });

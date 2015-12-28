@@ -1,23 +1,23 @@
 #!/usr/bin/env node
 
 /**
- * bitcoind.js example
+ * paycoind.js example
  */
 
-process.title = 'bitcoind_stripped.js';
+process.title = 'paycoind_stripped.js';
 
 /**
- * bitcoind
+ * paycoind
  */
 
-var bitcoind = require('../index_stripped.js')({
-  directory: '~/.libbitcoind-example'
+var paycoind = require('../index_stripped.js')({
+  directory: '~/.libpaycoind-example'
 });
 
-bitcoind.on('error', function(err) {
-  bitcoind.log('error="%s"', err.message);
+paycoind.on('error', function(err) {
+  paycoind.log('error="%s"', err.message);
 });
 
-bitcoind.on('open', function(status) {
-  bitcoind.log('status="%s"', status);
+paycoind.on('open', function(status) {
+  paycoind.log('status="%s"', status);
 });

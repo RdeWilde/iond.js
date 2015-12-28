@@ -1,9 +1,9 @@
 /**
- * bitcoind.js
+ * paycoind.js
  * Copyright (c) 2015, BitPay (MIT License)
  *
- * bitcoindjs.h:
- *   A bitcoind node.js binding header file.
+ * paycoindjs.h:
+ *   A paycoind node.js binding header file.
  */
 
 #include "main.h"
@@ -19,11 +19,11 @@
 #include "nan.h"
 #include "scheduler.h"
 
-NAN_METHOD(StartBitcoind);
+NAN_METHOD(StartPaycoind);
 NAN_METHOD(OnBlocksReady);
 NAN_METHOD(IsStopping);
 NAN_METHOD(IsStopped);
-NAN_METHOD(StopBitcoind);
+NAN_METHOD(StopPaycoind);
 NAN_METHOD(GetBlock);
 NAN_METHOD(GetTransaction);
 NAN_METHOD(GetInfo);

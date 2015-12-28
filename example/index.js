@@ -3,23 +3,23 @@
 'use strict';
 
 /**
- * bitcoind.js example
+ * paycoind.js example
  */
 
-process.title = 'bitcoind.js';
+process.title = 'paycoind.js';
 
 /**
- * bitcoind
+ * paycoind
  */
 
-var bitcoind = require('../')({
-  directory: process.env.BITCOINDJS_DIR || '~/.bitcoin'
+var paycoind = require('../')({
+  directory: process.env.BITCOINDJS_DIR || '~/.paycoin'
 });
 
-bitcoind.on('error', function(err) {
-  bitcoind.log('error="%s"', err.message);
+paycoind.on('error', function(err) {
+  paycoind.log('error="%s"', err.message);
 });
 
-bitcoind.on('open', function(status) {
-  bitcoind.log('status="%s"', status);
+paycoind.on('open', function(status) {
+  paycoind.log('status="%s"', status);
 });

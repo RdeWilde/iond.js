@@ -3,7 +3,7 @@
 exec 2> /dev/null
 
 root_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
-BITCOIN_DIR="${root_dir}/libbitcoind"
+BITCOIN_DIR="${root_dir}/libpaycoind"
 os=
 ext=so
 thread=-lboost_thread
@@ -75,14 +75,14 @@ if test -z "$1" -o x"$1" = x'thread'; then
 fi
 
 if test -z "$1" -o x"$1" = x'lib'; then
-  if test -e "${os_dir}/libbitcoind.${ext}" -o -e "${os_dir}/lib/libbitcoind.${ext}"; then
-    if test -e "${os_dir}/lib/libbitcoind.${ext}"; then
-      echo -n "$(pwd)/platform/${os}/lib/libbitcoind.${ext}"
+  if test -e "${os_dir}/libpaycoind.${ext}" -o -e "${os_dir}/lib/libpaycoind.${ext}"; then
+    if test -e "${os_dir}/lib/libpaycoind.${ext}"; then
+      echo -n "$(pwd)/platform/${os}/lib/libpaycoind.${ext}"
     else
-      echo -n "$(pwd)/platform/${os}/libbitcoind.${ext}"
+      echo -n "$(pwd)/platform/${os}/libpaycoind.${ext}"
     fi
   else
-    echo -n "${BITCOIN_DIR}/src/.libs/libbitcoind.${ext}"
+    echo -n "${BITCOIN_DIR}/src/.libs/libpaycoind.${ext}"
   fi
   exit 0
 fi

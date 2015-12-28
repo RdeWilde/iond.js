@@ -1,12 +1,12 @@
 /**
- * bitcoind.js - a binding for node.js which links to libbitcoind.so/dylib.
+ * paycoind.js - a binding for node.js which links to libpaycoind.so/dylib.
  * Copyright (c) 2015, BitPay (MIT License)
  *
- * bitcoindjs.cc:
- *   A bitcoind node.js binding.
+ * paycoindjs.cc:
+ *   A paycoind node.js binding.
  */
 
-#include "bitcoindjs.h"
+#include "paycoindjs.h"
 
 using namespace std;
 using namespace boost;
@@ -14,7 +14,7 @@ using namespace node;
 using namespace v8;
 
 /**
- * Bitcoin Globals
+ * Paycoin Globals
  */
 
 // These global functions and variables are
@@ -69,7 +69,7 @@ init(Handle<Object>);
 
 /**
  * Private Global Variables
- * Used only by bitcoindjs functions.
+ * Used only by paycoindjs functions.
  */
 
 static volatile bool shutdown_complete = false;
@@ -248,12 +248,12 @@ async_blocks_ready_after(uv_work_t *req) {
 }
 
 /**
- * StartBitcoind()
- * bitcoind.start(callback)
- * Start the bitcoind node with AppInit2() on a separate thread.
+ * StartPaycoind()
+ * paycoind.start(callback)
+ * Start the paycoind node with AppInit2() on a separate thread.
  */
 
-NAN_METHOD(StartBitcoind) {
+NAN_METHOD(StartPaycoind) {
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
@@ -287,11 +287,11 @@ NAN_METHOD(StartBitcoind) {
     callback = Local<Function>::Cast(args[0]);
   } else {
     return NanThrowError(
-      "Usage: bitcoind.start(callback)");
+      "Usage: paycoind.start(callback)");
   }
 
   //
-  // Run bitcoind's StartNode() on a separate thread.
+  // Run paycoind's StartNode() on a separate thread.
   //
 
   async_node_data *data = new async_node_data();
@@ -329,14 +329,14 @@ async_start_node(uv_work_t *req) {
     g_data_dir = (char *)data->datadir.c_str();
   } else {
     g_data_dir = (char *)malloc(sizeof(char) * 512);
-    snprintf(g_data_dir, sizeof(char) * 512, "%s/.bitcoind.js", getenv("HOME"));
+    snprintf(g_data_dir, sizeof(char) * 512, "%s/.paycoind.js", getenv("HOME"));
   }
   g_rpc = (bool)data->rpc;
   g_testnet = (bool)data->testnet;
   g_txindex = (bool)data->txindex;
   tcgetattr(STDIN_FILENO, &orig_termios);
   start_node();
-  data->result = std::string("bitcoind opened.");
+  data->result = std::string("paycoind opened.");
 }
 
 /**
@@ -393,7 +393,7 @@ start_node(void) {
 
   new boost::thread(boost::bind(&start_node_thread));
 
-  // Drop the bitcoind signal handlers: we want our own.
+  // Drop the paycoind signal handlers: we want our own.
   signal(SIGINT, SIG_DFL);
   signal(SIGHUP, SIG_DFL);
   signal(SIGQUIT, SIG_DFL);
@@ -410,7 +410,7 @@ start_node_thread(void) {
   int argc = 0;
   char **argv = (char **)malloc((4 + 1) * sizeof(char **));
 
-  argv[argc] = (char *)"bitcoind";
+  argv[argc] = (char *)"paycoind";
   argc++;
 
   if (g_data_dir) {
@@ -423,7 +423,7 @@ start_node_thread(void) {
       argc++;
     } else {
       if (set_cooked()) {
-        fprintf(stderr, "bitcoind.js: Bad -datadir value.\n");
+        fprintf(stderr, "paycoind.js: Bad -datadir value.\n");
       }
     }
   }
@@ -450,7 +450,7 @@ start_node_thread(void) {
     if (!boost::filesystem::is_directory(GetDataDir(false))) {
       if (set_cooked()) {
         fprintf(stderr,
-          "bitcoind.js: Specified data directory \"%s\" does not exist.\n",
+          "paycoind.js: Specified data directory \"%s\" does not exist.\n",
           mapArgs["-datadir"].c_str());
       }
       shutdown_complete = true;
@@ -463,7 +463,7 @@ start_node_thread(void) {
     } catch(std::exception &e) {
       if (set_cooked()) {
         fprintf(stderr,
-          "bitcoind.js: Error reading configuration file: %s\n", e.what());
+          "paycoind.js: Error reading configuration file: %s\n", e.what());
       }
       shutdown_complete = true;
       _exit(1);
@@ -473,7 +473,7 @@ start_node_thread(void) {
     if (!SelectParamsFromCommandLine()) {
       if (set_cooked()) {
         fprintf(stderr,
-          "bitcoind.js: Invalid combination of -regtest and -testnet.\n");
+          "paycoind.js: Invalid combination of -regtest and -testnet.\n");
       }
       shutdown_complete = true;
       _exit(1);
@@ -486,11 +486,11 @@ start_node_thread(void) {
 
   } catch (std::exception& e) {
      if (set_cooked()) {
-       fprintf(stderr, "bitcoind.js: AppInit2(): std::exception\n");
+       fprintf(stderr, "paycoind.js: AppInit2(): std::exception\n");
      }
   } catch (...) {
     if (set_cooked()) {
-      fprintf(stderr, "bitcoind.js: AppInit2(): other exception\n");
+      fprintf(stderr, "paycoind.js: AppInit2(): other exception\n");
     }
   }
 
@@ -506,24 +506,24 @@ start_node_thread(void) {
 }
 
 /**
- * StopBitcoind()
- * bitcoind.stop(callback)
+ * StopPaycoind()
+ * paycoind.stop(callback)
  */
 
-NAN_METHOD(StopBitcoind) {
-  fprintf(stderr, "Stopping Bitcoind please wait!\n");
+NAN_METHOD(StopPaycoind) {
+  fprintf(stderr, "Stopping Paycoind please wait!\n");
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
   if (args.Length() < 1 || !args[0]->IsFunction()) {
     return NanThrowError(
-      "Usage: bitcoind.stop(callback)");
+      "Usage: paycoind.stop(callback)");
   }
 
   Local<Function> callback = Local<Function>::Cast(args[0]);
 
   //
-  // Run bitcoind's StartShutdown() on a separate thread.
+  // Run paycoind's StartShutdown() on a separate thread.
   //
 
   async_node_data *data = new async_node_data();
@@ -557,7 +557,7 @@ async_stop_node(uv_work_t *req) {
   while(!shutdown_complete) {
     usleep(1E6);
   }
-  data->result = std::string("bitcoind shutdown.");
+  data->result = std::string("paycoind shutdown.");
 }
 
 /**
@@ -600,8 +600,8 @@ async_stop_node_after(uv_work_t *req) {
 
 /**
  * IsStopping()
- * bitcoind.stopping()
- * Check whether bitcoind is in the process of shutting down. This is polled
+ * paycoind.stopping()
+ * Check whether paycoind is in the process of shutting down. This is polled
  * from javascript.
  */
 
@@ -612,8 +612,8 @@ NAN_METHOD(IsStopping) {
 
 /**
  * IsStopped()
- * bitcoind.stopped()
- * Check whether bitcoind has shutdown completely. This will be polled by
+ * paycoind.stopped()
+ * Check whether paycoind has shutdown completely. This will be polled by
  * javascript to check whether the libuv event loop is safe to stop.
  */
 
@@ -624,7 +624,7 @@ NAN_METHOD(IsStopped) {
 
 /**
  * GetBlock()
- * bitcoind.getBlock([blockhash,blockheight], callback)
+ * paycoind.getBlock([blockhash,blockheight], callback)
  * Read any block from disk asynchronously.
  */
 
@@ -635,7 +635,7 @@ NAN_METHOD(GetBlock) {
       || (!args[0]->IsString() && !args[0]->IsNumber())
       || !args[1]->IsFunction()) {
     return NanThrowError(
-      "Usage: bitcoindjs.getBlock([blockhash,blockheight], callback)");
+      "Usage: paycoindjs.getBlock([blockhash,blockheight], callback)");
   }
 
   async_block_data *data = new async_block_data();
@@ -765,7 +765,7 @@ async_get_block_after(uv_work_t *req) {
 
 /**
  * GetTransaction()
- * bitcoind.getTransaction(txid, callback)
+ * paycoind.getTransaction(txid, callback)
  * Read any transaction from disk asynchronously.
  */
 
@@ -777,7 +777,7 @@ NAN_METHOD(GetTransaction) {
       || !args[1]->IsBoolean()
       || !args[2]->IsFunction()) {
     return NanThrowError(
-      "Usage: bitcoindjs.getTransaction(txid, callback)");
+      "Usage: paycoindjs.getTransaction(txid, callback)");
   }
 
   String::Utf8Value txid_(args[0]->ToString());
@@ -893,7 +893,7 @@ async_get_tx_after(uv_work_t *req) {
 
 /**
  * IsSpent()
- * bitcoindjs.isSpent()
+ * paycoindjs.isSpent()
  * Determine if an outpoint is spent
  */
 NAN_METHOD(IsSpent) {
@@ -901,7 +901,7 @@ NAN_METHOD(IsSpent) {
 
   if (args.Length() > 2) {
     return NanThrowError(
-      "Usage: bitcoindjs.isSpent(txid, outputIndex)");
+      "Usage: paycoindjs.isSpent(txid, outputIndex)");
   }
 
   String::Utf8Value arg(args[0]->ToString());
@@ -927,7 +927,7 @@ NAN_METHOD(IsSpent) {
 
 /**
  * GetInfo()
- * bitcoindjs.getInfo()
+ * paycoindjs.getInfo()
  * Get miscellaneous information
  */
 
@@ -936,7 +936,7 @@ NAN_METHOD(GetInfo) {
 
   if (args.Length() > 0) {
     return NanThrowError(
-      "Usage: bitcoindjs.getInfo()");
+      "Usage: paycoindjs.getInfo()");
   }
 
   Local<Object> obj = NanNew<Object>();
@@ -977,16 +977,16 @@ set_cooked(void) {
 
 /**
  * Init()
- * Initialize the singleton object known as bitcoindjs.
+ * Initialize the singleton object known as paycoindjs.
  */
 
 extern "C" void
 init(Handle<Object> target) {
   NanScope();
 
-  NODE_SET_METHOD(target, "start", StartBitcoind);
+  NODE_SET_METHOD(target, "start", StartPaycoind);
   NODE_SET_METHOD(target, "onBlocksReady", OnBlocksReady);
-  NODE_SET_METHOD(target, "stop", StopBitcoind);
+  NODE_SET_METHOD(target, "stop", StopPaycoind);
   NODE_SET_METHOD(target, "stopping", IsStopping);
   NODE_SET_METHOD(target, "stopped", IsStopped);
   NODE_SET_METHOD(target, "getBlock", GetBlock);
@@ -996,4 +996,4 @@ init(Handle<Object> target) {
 
 }
 
-NODE_MODULE(bitcoindjs, init)
+NODE_MODULE(paycoindjs, init)

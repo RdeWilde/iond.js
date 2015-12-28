@@ -1,27 +1,27 @@
 #!/usr/bin/env node
 
 /**
- * bitcoind.js example
+ * paycoind.js example
  */
 
-process.title = 'bitcoind.js';
+process.title = 'paycoind.js';
 
 /**
- * bitcoind
+ * paycoind
  */
 
-var bitcoind = require('../index.js')({
-  directory: '~/.bitcoin'
+var paycoind = require('../index.js')({
+  directory: '~/.paycoin'
 });
 
-bitcoind.on('error', function(err) {
-  bitcoind.log('error="%s"', err.message);
+paycoind.on('error', function(err) {
+  paycoind.log('error="%s"', err.message);
 });
 
-bitcoind.on('ready', function(err, result) {
+paycoind.on('ready', function(err, result) {
   console.log('Ready!');
 
-  bitcoind.getBlock('000000000000000082ccf8f1557c5d40b21edabb18d2d691cfbf87118bac7254', function(err, block) {
+  paycoind.getBlock('000000000000000082ccf8f1557c5d40b21edabb18d2d691cfbf87118bac7254', function(err, block) {
     if (err) {
       console.log(err);
     }
@@ -30,6 +30,6 @@ bitcoind.on('ready', function(err, result) {
 
 });
 
-bitcoind.on('open', function(status) {
-  bitcoind.log('status="%s"', status);
+paycoind.on('open', function(status) {
+  paycoind.log('status="%s"', status);
 });
