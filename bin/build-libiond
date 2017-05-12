@@ -14,14 +14,14 @@ if test x"$1" = x'debug'; then
   debug=--enable-debug
 fi
 
-btc_dir="${root_dir}/libiond"
-echo "Using BTC directory: ${btc_dir}"
+ion_dir="${root_dir}/libiond"
+echo "Using ION directory: ${ion_dir}"
 
 rm -f "${os_dir}/libiond.*"
 only_make=false
 if [ -d "${root_dir}/libiond" ]; then
   echo "Running make inside libiond (assuming you've previously patched and configured libiond)..."
-  cd "${btc_dir}"
+  cd "${ion_dir}"
   only_make=true
 else
   echo "Removing cloning, patching, and building libiond..."
@@ -36,12 +36,12 @@ if [ "${only_make}" = false ]; then
   fi
 
   echo "attempting to checkout tag: ${tag} of ion from github..."
-  git clone --depth 1 --branch "${tag}" git://github.com/ion/ion.git libiond
+  git clone --depth 1 --branch "${tag}" git://github.com/ionomy/ion.git libiond
 
-  cd "${btc_dir}"
+  cd "${ion_dir}"
 
-  echo '../patch-ion.sh' "${btc_dir}"
-  ../bin/patch-ion "${btc_dir}"
+  echo '../patch-ion.sh' "${ion_dir}"
+  ../bin/patch-ion "${ion_dir}"
 
   if ! test -d .git; then
     echo 'Please point this script to an upstream ion git repo.'

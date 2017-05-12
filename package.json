@@ -1,7 +1,7 @@
 {
   "name": "iond.js",
   "description": "Node binding for iond",
-  "author": "BitPay <dev@bitpay.com>",
+  "author": "Robert de Wilde <email@robertdewilde.nl>",
   "version": "0.0.8",
   "main": "./index.js",
   "repository": "git://github.com/bitpay/iond.js.git",

@@ -13,7 +13,7 @@ process.title = 'iond.js';
  */
 
 var iond = require('../')({
-  directory: process.env.BITCOINDJS_DIR || '~/.ion'
+  directory: process.env.IONDJS_DIR || '~/.ion'
 });
 
 iond.on('error', function(err) {

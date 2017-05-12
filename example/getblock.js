@@ -21,7 +21,7 @@ iond.on('error', function(err) {
 iond.on('ready', function(err, result) {
   console.log('Ready!');
 
-  iond.getBlock('000000000000000082ccf8f1557c5d40b21edabb18d2d691cfbf87118bac7254', function(err, block) {
+  iond.getBlock('000000ed2f68cd6c7935831cc1d473da7c6decdb87e8b5dba0afff0b00002690', function(err, block) {
     if (err) {
       console.log(err);
     }

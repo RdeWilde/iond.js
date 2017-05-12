@@ -4,7 +4,7 @@
 // To run the tests: $ mocha -R spec index.js
 
 var chai = require('chai');
-var bitcore = require('bitcore');
+var bitcore = require('bitcore'); // FIXME?
 var iond;
 
 /* jshint unused: false */
@@ -23,7 +23,7 @@ describe('Basic Functionality', function() {
   before(function(done) {
     this.timeout(30000);
     iond = require('../')({
-      directory: process.env.BITCOINDJS_DIR || '~/.ion',
+      directory: process.env.IONDJS_DIR || '~/.ion',
     });
 
     iond.on('error', function(err) {
@@ -97,10 +97,10 @@ describe('Basic Functionality', function() {
   describe('get blocks by height', function() {
 
     var knownHeights = [
-      [0, '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'],
-      [1, '00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048'],
-      [100000,'000000000003ba27aa200b1cecaad478d2b00432346c3f1f3986da1afd33e506'],
-      [314159, '00000000000000001bb82a7f5973618cfd3185ba1ded04dd852a653f92a27c45']
+      [0, '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'], // FIXME
+      [1, '000000ed2f68cd6c7935831cc1d473da7c6decdb87e8b5dba0afff0b00002690'],
+      [501,'11272cb7e1a55fa8d470db9a63645f32d14c123f78ff7ea1d4061ede70d13dfe'],
+      [916, '18c3889e13b5d0b0ce54b2b82b7963f8472eb1c00dbf32f144fcef80186b7c68']
     ];
 
     knownHeights.forEach(function(data) {

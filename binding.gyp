@@ -34,7 +34,7 @@
         '<!(./platform/os.sh lib)'
       ],
       'ldflags': [
-        '-Wl,-rpath,<!(./platform/os.sh osdir),-rpath,<!(./platform/os.sh btcdir)/src/leveldb'
+        '-Wl,-rpath,<!(./platform/os.sh osdir),-rpath,<!(./platform/os.sh iondir)/src/leveldb'
       ]
     }
   }]

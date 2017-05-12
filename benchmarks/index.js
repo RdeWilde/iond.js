@@ -13,13 +13,13 @@ console.log('-------------------------------------------------------------------
 
 var fixtureData = {
   blockHashes: [
-    '00000000fa7a4acea40e5d0591d64faf48fd862fa3561d111d967fc3a6a94177',
+    '00000000fa7a4acea40e5d0591d64faf48fd862fa3561d111d967fc3a6a94177', // FIXME
     '000000000017e9e0afc4bc55339f60ffffb9cbe883f7348a9fbc198a486d5488',
     '000000000019ddb889b534c5d85fca2c91a73feef6fd775cd228dea45353bae1',
     '0000000000977ac3d9f5261efc88a3c2d25af92a91350750d00ad67744fa8d03'
   ],
   txHashes: [
-    '5523b432c1bd6c101bee704ad6c560fd09aefc483f8a4998df6741feaa74e6eb',
+    '5523b432c1bd6c101bee704ad6c560fd09aefc483f8a4998df6741feaa74e6eb', // FIXME
     'ff48393e7731507c789cfa9cbfae045b10e023ce34ace699a63cdad88c8b43f8',
     '5d35c5eebf704877badd0a131b0a86588041997d40dbee8ccff21ca5b7e5e333',
     '88842f2cf9d8659c3434f6bc0c515e22d87f33e864e504d2d7117163a572a3aa',
@@ -45,7 +45,7 @@ iond.on('ready', function() {
 
   var client = new ion.Client({
     host: 'localhost',
-    port: 18332,
+    port: 18332, // FIXME ?
     user: 'ion',
     pass: 'local321'
   });

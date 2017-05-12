@@ -22,9 +22,9 @@ test.js
 **/*.dylib
 **/*.so
 **/*.old
-libpaycoind
+libiond
 **/*.files
 **/*.config
 **/*.creator
-libpaycoind.includes
+libiond.includes
 *.log
