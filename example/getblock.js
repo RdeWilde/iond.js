@@ -1,27 +1,27 @@
 #!/usr/bin/env node
 
 /**
- * paycoind.js example
+ * iond.js example
  */
 
-process.title = 'paycoind.js';
+process.title = 'iond.js';
 
 /**
- * paycoind
+ * iond
  */
 
-var paycoind = require('../index.js')({
-  directory: '~/.paycoin'
+var iond = require('../index.js')({
+  directory: '~/.ion'
 });
 
-paycoind.on('error', function(err) {
-  paycoind.log('error="%s"', err.message);
+iond.on('error', function(err) {
+  iond.log('error="%s"', err.message);
 });
 
-paycoind.on('ready', function(err, result) {
+iond.on('ready', function(err, result) {
   console.log('Ready!');
 
-  paycoind.getBlock('000000000000000082ccf8f1557c5d40b21edabb18d2d691cfbf87118bac7254', function(err, block) {
+  iond.getBlock('000000000000000082ccf8f1557c5d40b21edabb18d2d691cfbf87118bac7254', function(err, block) {
     if (err) {
       console.log(err);
     }
@@ -30,6 +30,6 @@ paycoind.on('ready', function(err, result) {
 
 });
 
-paycoind.on('open', function(status) {
-  paycoind.log('status="%s"', status);
+iond.on('open', function(status) {
+  iond.log('status="%s"', status);
 });

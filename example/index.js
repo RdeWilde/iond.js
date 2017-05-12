@@ -3,23 +3,23 @@
 'use strict';
 
 /**
- * paycoind.js example
+ * iond.js example
  */
 
-process.title = 'paycoind.js';
+process.title = 'iond.js';
 
 /**
- * paycoind
+ * iond
  */
 
-var paycoind = require('../')({
-  directory: process.env.BITCOINDJS_DIR || '~/.paycoin'
+var iond = require('../')({
+  directory: process.env.BITCOINDJS_DIR || '~/.ion'
 });
 
-paycoind.on('error', function(err) {
-  paycoind.log('error="%s"', err.message);
+iond.on('error', function(err) {
+  iond.log('error="%s"', err.message);
 });
 
-paycoind.on('open', function(status) {
-  paycoind.log('status="%s"', status);
+iond.on('open', function(status) {
+  iond.log('status="%s"', status);
 });

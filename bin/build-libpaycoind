@@ -7,24 +7,24 @@ cd "${root_dir}"
 os_dir=$(./platform/os.sh osdir)
 
 #set the LD_LIBRARY_PATH for the linux clients.
-export LD_LIBRARY_PATH="${root_dir}/libpaycoind/src/leveldb":"${os_dir}":$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH="${root_dir}/libiond/src/leveldb":"${os_dir}":$LD_LIBRARY_PATH
 
 debug=
 if test x"$1" = x'debug'; then
   debug=--enable-debug
 fi
 
-btc_dir="${root_dir}/libpaycoind"
+btc_dir="${root_dir}/libiond"
 echo "Using BTC directory: ${btc_dir}"
 
-rm -f "${os_dir}/libpaycoind.*"
+rm -f "${os_dir}/libiond.*"
 only_make=false
-if [ -d "${root_dir}/libpaycoind" ]; then
-  echo "Running make inside libpaycoind (assuming you've previously patched and configured libpaycoind)..."
+if [ -d "${root_dir}/libiond" ]; then
+  echo "Running make inside libiond (assuming you've previously patched and configured libiond)..."
   cd "${btc_dir}"
   only_make=true
 else
-  echo "Removing cloning, patching, and building libpaycoind..."
+  echo "Removing cloning, patching, and building libiond..."
 fi
 
 if [ "${only_make}" = false ]; then
@@ -35,16 +35,16 @@ if [ "${only_make}" = false ]; then
     exit 0
   fi
 
-  echo "attempting to checkout tag: ${tag} of paycoin from github..."
-  git clone --depth 1 --branch "${tag}" git://github.com/paycoin/paycoin.git libpaycoind
+  echo "attempting to checkout tag: ${tag} of ion from github..."
+  git clone --depth 1 --branch "${tag}" git://github.com/ion/ion.git libiond
 
   cd "${btc_dir}"
 
-  echo '../patch-paycoin.sh' "${btc_dir}"
-  ../bin/patch-paycoin "${btc_dir}"
+  echo '../patch-ion.sh' "${btc_dir}"
+  ../bin/patch-ion "${btc_dir}"
 
   if ! test -d .git; then
-    echo 'Please point this script to an upstream paycoin git repo.'
+    echo 'Please point this script to an upstream ion git repo.'
     exit 1
   fi
 
@@ -60,18 +60,18 @@ echo 'make V=1'
 make V=1
 
 ext=$($root_dir/platform/os.sh ext)
-echo 'Copying libpaycoind.{so|dylib} to its appropriate location.'
-if test -e "${root_dir}/libpaycoind/src/.libs/libpaycoind.${ext}"; then
+echo 'Copying libiond.{so|dylib} to its appropriate location.'
+if test -e "${root_dir}/libiond/src/.libs/libiond.${ext}"; then
   if [ "$ext" = "dylib" ]; then
     if [ ! -d "${os_dir}/lib" ]; then
       mkdir -p "${os_dir}/lib"
     fi 
-    cp -R "${root_dir}"/libpaycoind/src/.libs/libpaycoind.*dylib "${os_dir}/lib/"
+    cp -R "${root_dir}"/libiond/src/.libs/libiond.*dylib "${os_dir}/lib/"
   else
     if [ ! -d "${os_dir}" ]; then
       mkdir -p "${os_dir}"
     fi
-    cp -P "${root_dir}"/libpaycoind/src/.libs/libpaycoind.so* "${os_dir}/"
+    cp -P "${root_dir}"/libiond/src/.libs/libiond.so* "${os_dir}/"
   fi
 fi
 

@@ -1,12 +1,12 @@
 /**
- * paycoind.js - a binding for node.js which links to libpaycoind.so/dylib.
+ * iond.js - a binding for node.js which links to libiond.so/dylib.
  * Copyright (c) 2015, BitPay (MIT License)
  *
- * paycoindjs.cc:
- *   A paycoind node.js binding.
+ * iondjs.cc:
+ *   A iond node.js binding.
  */
 
-#include "paycoindjs.h"
+#include "iondjs.h"
 
 using namespace std;
 using namespace boost;
@@ -14,7 +14,7 @@ using namespace node;
 using namespace v8;
 
 /**
- * Paycoin Globals
+ * Ion Globals
  */
 
 // These global functions and variables are
@@ -69,7 +69,7 @@ init(Handle<Object>);
 
 /**
  * Private Global Variables
- * Used only by paycoindjs functions.
+ * Used only by iondjs functions.
  */
 
 static volatile bool shutdown_complete = false;
@@ -248,12 +248,12 @@ async_blocks_ready_after(uv_work_t *req) {
 }
 
 /**
- * StartPaycoind()
- * paycoind.start(callback)
- * Start the paycoind node with AppInit2() on a separate thread.
+ * StartIond()
+ * iond.start(callback)
+ * Start the iond node with AppInit2() on a separate thread.
  */
 
-NAN_METHOD(StartPaycoind) {
+NAN_METHOD(StartIond) {
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
@@ -287,11 +287,11 @@ NAN_METHOD(StartPaycoind) {
     callback = Local<Function>::Cast(args[0]);
   } else {
     return NanThrowError(
-      "Usage: paycoind.start(callback)");
+      "Usage: iond.start(callback)");
   }
 
   //
-  // Run paycoind's StartNode() on a separate thread.
+  // Run iond's StartNode() on a separate thread.
   //
 
   async_node_data *data = new async_node_data();
@@ -329,14 +329,14 @@ async_start_node(uv_work_t *req) {
     g_data_dir = (char *)data->datadir.c_str();
   } else {
     g_data_dir = (char *)malloc(sizeof(char) * 512);
-    snprintf(g_data_dir, sizeof(char) * 512, "%s/.paycoind.js", getenv("HOME"));
+    snprintf(g_data_dir, sizeof(char) * 512, "%s/.iond.js", getenv("HOME"));
   }
   g_rpc = (bool)data->rpc;
   g_testnet = (bool)data->testnet;
   g_txindex = (bool)data->txindex;
   tcgetattr(STDIN_FILENO, &orig_termios);
   start_node();
-  data->result = std::string("paycoind opened.");
+  data->result = std::string("iond opened.");
 }
 
 /**
@@ -393,7 +393,7 @@ start_node(void) {
 
   new boost::thread(boost::bind(&start_node_thread));
 
-  // Drop the paycoind signal handlers: we want our own.
+  // Drop the iond signal handlers: we want our own.
   signal(SIGINT, SIG_DFL);
   signal(SIGHUP, SIG_DFL);
   signal(SIGQUIT, SIG_DFL);
@@ -410,7 +410,7 @@ start_node_thread(void) {
   int argc = 0;
   char **argv = (char **)malloc((4 + 1) * sizeof(char **));
 
-  argv[argc] = (char *)"paycoind";
+  argv[argc] = (char *)"iond";
   argc++;
 
   if (g_data_dir) {
@@ -423,7 +423,7 @@ start_node_thread(void) {
       argc++;
     } else {
       if (set_cooked()) {
-        fprintf(stderr, "paycoind.js: Bad -datadir value.\n");
+        fprintf(stderr, "iond.js: Bad -datadir value.\n");
       }
     }
   }
@@ -450,7 +450,7 @@ start_node_thread(void) {
     if (!boost::filesystem::is_directory(GetDataDir(false))) {
       if (set_cooked()) {
         fprintf(stderr,
-          "paycoind.js: Specified data directory \"%s\" does not exist.\n",
+          "iond.js: Specified data directory \"%s\" does not exist.\n",
           mapArgs["-datadir"].c_str());
       }
       shutdown_complete = true;
@@ -463,7 +463,7 @@ start_node_thread(void) {
     } catch(std::exception &e) {
       if (set_cooked()) {
         fprintf(stderr,
-          "paycoind.js: Error reading configuration file: %s\n", e.what());
+          "iond.js: Error reading configuration file: %s\n", e.what());
       }
       shutdown_complete = true;
       _exit(1);
@@ -473,7 +473,7 @@ start_node_thread(void) {
     if (!SelectParamsFromCommandLine()) {
       if (set_cooked()) {
         fprintf(stderr,
-          "paycoind.js: Invalid combination of -regtest and -testnet.\n");
+          "iond.js: Invalid combination of -regtest and -testnet.\n");
       }
       shutdown_complete = true;
       _exit(1);
@@ -486,11 +486,11 @@ start_node_thread(void) {
 
   } catch (std::exception& e) {
      if (set_cooked()) {
-       fprintf(stderr, "paycoind.js: AppInit2(): std::exception\n");
+       fprintf(stderr, "iond.js: AppInit2(): std::exception\n");
      }
   } catch (...) {
     if (set_cooked()) {
-      fprintf(stderr, "paycoind.js: AppInit2(): other exception\n");
+      fprintf(stderr, "iond.js: AppInit2(): other exception\n");
     }
   }
 
@@ -506,24 +506,24 @@ start_node_thread(void) {
 }
 
 /**
- * StopPaycoind()
- * paycoind.stop(callback)
+ * StopIond()
+ * iond.stop(callback)
  */
 
-NAN_METHOD(StopPaycoind) {
-  fprintf(stderr, "Stopping Paycoind please wait!\n");
+NAN_METHOD(StopIond) {
+  fprintf(stderr, "Stopping Iond please wait!\n");
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
   if (args.Length() < 1 || !args[0]->IsFunction()) {
     return NanThrowError(
-      "Usage: paycoind.stop(callback)");
+      "Usage: iond.stop(callback)");
   }
 
   Local<Function> callback = Local<Function>::Cast(args[0]);
 
   //
-  // Run paycoind's StartShutdown() on a separate thread.
+  // Run iond's StartShutdown() on a separate thread.
   //
 
   async_node_data *data = new async_node_data();
@@ -557,7 +557,7 @@ async_stop_node(uv_work_t *req) {
   while(!shutdown_complete) {
     usleep(1E6);
   }
-  data->result = std::string("paycoind shutdown.");
+  data->result = std::string("iond shutdown.");
 }
 
 /**
@@ -600,8 +600,8 @@ async_stop_node_after(uv_work_t *req) {
 
 /**
  * IsStopping()
- * paycoind.stopping()
- * Check whether paycoind is in the process of shutting down. This is polled
+ * iond.stopping()
+ * Check whether iond is in the process of shutting down. This is polled
  * from javascript.
  */
 
@@ -612,8 +612,8 @@ NAN_METHOD(IsStopping) {
 
 /**
  * IsStopped()
- * paycoind.stopped()
- * Check whether paycoind has shutdown completely. This will be polled by
+ * iond.stopped()
+ * Check whether iond has shutdown completely. This will be polled by
  * javascript to check whether the libuv event loop is safe to stop.
  */
 
@@ -624,7 +624,7 @@ NAN_METHOD(IsStopped) {
 
 /**
  * GetBlock()
- * paycoind.getBlock([blockhash,blockheight], callback)
+ * iond.getBlock([blockhash,blockheight], callback)
  * Read any block from disk asynchronously.
  */
 
@@ -635,7 +635,7 @@ NAN_METHOD(GetBlock) {
       || (!args[0]->IsString() && !args[0]->IsNumber())
       || !args[1]->IsFunction()) {
     return NanThrowError(
-      "Usage: paycoindjs.getBlock([blockhash,blockheight], callback)");
+      "Usage: iondjs.getBlock([blockhash,blockheight], callback)");
   }
 
   async_block_data *data = new async_block_data();
@@ -765,7 +765,7 @@ async_get_block_after(uv_work_t *req) {
 
 /**
  * GetTransaction()
- * paycoind.getTransaction(txid, callback)
+ * iond.getTransaction(txid, callback)
  * Read any transaction from disk asynchronously.
  */
 
@@ -777,7 +777,7 @@ NAN_METHOD(GetTransaction) {
       || !args[1]->IsBoolean()
       || !args[2]->IsFunction()) {
     return NanThrowError(
-      "Usage: paycoindjs.getTransaction(txid, callback)");
+      "Usage: iondjs.getTransaction(txid, callback)");
   }
 
   String::Utf8Value txid_(args[0]->ToString());
@@ -893,7 +893,7 @@ async_get_tx_after(uv_work_t *req) {
 
 /**
  * IsSpent()
- * paycoindjs.isSpent()
+ * iondjs.isSpent()
  * Determine if an outpoint is spent
  */
 NAN_METHOD(IsSpent) {
@@ -901,7 +901,7 @@ NAN_METHOD(IsSpent) {
 
   if (args.Length() > 2) {
     return NanThrowError(
-      "Usage: paycoindjs.isSpent(txid, outputIndex)");
+      "Usage: iondjs.isSpent(txid, outputIndex)");
   }
 
   String::Utf8Value arg(args[0]->ToString());
@@ -927,7 +927,7 @@ NAN_METHOD(IsSpent) {
 
 /**
  * GetInfo()
- * paycoindjs.getInfo()
+ * iondjs.getInfo()
  * Get miscellaneous information
  */
 
@@ -936,7 +936,7 @@ NAN_METHOD(GetInfo) {
 
   if (args.Length() > 0) {
     return NanThrowError(
-      "Usage: paycoindjs.getInfo()");
+      "Usage: iondjs.getInfo()");
   }
 
   Local<Object> obj = NanNew<Object>();
@@ -977,16 +977,16 @@ set_cooked(void) {
 
 /**
  * Init()
- * Initialize the singleton object known as paycoindjs.
+ * Initialize the singleton object known as iondjs.
  */
 
 extern "C" void
 init(Handle<Object> target) {
   NanScope();
 
-  NODE_SET_METHOD(target, "start", StartPaycoind);
+  NODE_SET_METHOD(target, "start", StartIond);
   NODE_SET_METHOD(target, "onBlocksReady", OnBlocksReady);
-  NODE_SET_METHOD(target, "stop", StopPaycoind);
+  NODE_SET_METHOD(target, "stop", StopIond);
   NODE_SET_METHOD(target, "stopping", IsStopping);
   NODE_SET_METHOD(target, "stopped", IsStopped);
   NODE_SET_METHOD(target, "getBlock", GetBlock);
@@ -996,4 +996,4 @@ init(Handle<Object> target) {
 
 }
 
-NODE_MODULE(paycoindjs, init)
+NODE_MODULE(iondjs, init)

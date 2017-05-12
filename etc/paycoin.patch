@@ -1,13 +1,13 @@
 From 05084f2a640b862132588b322461ec8e13058fc3 Mon Sep 17 00:00:00 2001
 From: Chris Kleeschulte <chrisk@bitpay.com>
 Date: Mon, 13 Jul 2015 12:49:30 -0400
-Subject: [PATCH] libpaycoind
+Subject: [PATCH] libiond
 
 ---
  config_me.sh         |  1 +
  configure.ac         | 37 ++++++++++++++++++++++++++++++++-----
  src/Makefile.am      | 42 ++++++++++++++++++++++++++++++++++--------
- src/paycoind.cpp     |  6 ++++++
+ src/iond.cpp     |  6 ++++++
  src/init.h           |  5 +++++
  src/leveldb/Makefile |  6 +++++-
  src/leveldbwrapper.h | 12 ++++++++++++
@@ -31,7 +31,7 @@ index 37fe47e..27a9b9a 100644
 
 +AC_ARG_ENABLE([daemonlib],
 +  [AS_HELP_STRING([--enable-daemonlib],
-+  [compile all of paycoind as a library (default is no)])],
++  [compile all of iond as a library (default is no)])],
 +  [use_daemonlib=$enableval],
 +  [use_daemonlib=no])
 +
@@ -119,12 +119,12 @@ index 1c2f770..632f608 100644
 
  BITCOIN_CONFIG_INCLUDES=-I$(builddir)/config
 @@ -49,16 +54,16 @@ BITCOIN_INCLUDES += $(BDB_CPPFLAGS)
- EXTRA_LIBRARIES += libpaycoin_wallet.a
+ EXTRA_LIBRARIES += libion_wallet.a
  endif
 
 -if BUILD_BITCOIN_LIBS
--lib_LTLIBRARIES = libpaycoinconsensus.la
--LIBBITCOIN_CONSENSUS=libpaycoinconsensus.la
+-lib_LTLIBRARIES = libionconsensus.la
+-LIBBITCOIN_CONSENSUS=libionconsensus.la
 -else
 -LIBBITCOIN_CONSENSUS=
 -endif
@@ -134,74 +134,74 @@ index 1c2f770..632f608 100644
  TESTS =
 
 +if BUILD_BITCOIN_LIBS
-+lib_LTLIBRARIES += libpaycoinconsensus.la
-+LIBBITCOIN_CONSENSUS += libpaycoinconsensus.la
++lib_LTLIBRARIES += libionconsensus.la
++LIBBITCOIN_CONSENSUS += libionconsensus.la
 +endif
 +
 +if !ENABLE_DAEMONLIB
  if BUILD_BITCOIND
-   bin_PROGRAMS += paycoind
+   bin_PROGRAMS += iond
  endif
 @@ -66,6 +71,9 @@ endif
  if BUILD_BITCOIN_UTILS
-   bin_PROGRAMS += paycoin-cli paycoin-tx
+   bin_PROGRAMS += ion-cli ion-tx
  endif
 +else
-+lib_LTLIBRARIES += libpaycoind.la
++lib_LTLIBRARIES += libiond.la
 +endif
 
  .PHONY: FORCE
- # paycoin core #
+ # ion core #
 @@ -169,8 +177,9 @@ obj/build.h: FORCE
  	@$(MKDIR_P) $(builddir)/obj
  	@$(top_srcdir)/share/genbuild.sh $(abs_top_builddir)/src/obj/build.h \
  	  $(abs_top_srcdir)
--libpaycoin_util_a-clientversion.$(OBJEXT): obj/build.h
+-libion_util_a-clientversion.$(OBJEXT): obj/build.h
 
-+libpaycoin_util_a-clientversion.$(OBJEXT): obj/build.h
++libion_util_a-clientversion.$(OBJEXT): obj/build.h
 +clientversion.cpp: obj/build.h
- # server: shared between paycoind and paycoin-qt
- libpaycoin_server_a_CPPFLAGS = $(BITCOIN_INCLUDES) $(MINIUPNPC_CPPFLAGS)
- libpaycoin_server_a_SOURCES = \
-@@ -309,9 +318,18 @@ nodist_libpaycoin_util_a_SOURCES = $(srcdir)/obj/build.h
- paycoind_SOURCES = paycoind.cpp
- paycoind_CPPFLAGS = $(BITCOIN_INCLUDES)
- paycoind_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
-+libpaycoind_la_SOURCES = paycoind.cpp
-+libpaycoind_la_SOURCES += $(libpaycoin_util_a_SOURCES)
-+libpaycoind_la_SOURCES += $(libpaycoin_univalue_a_SOURCES)
-+libpaycoind_la_SOURCES += $(libpaycoin_crypto_a_SOURCES)
-+libpaycoind_la_SOURCES += $(libpaycoin_common_a_SOURCES)
-+libpaycoind_la_SOURCES += $(libpaycoin_server_a_SOURCES)
-+libpaycoind_la_SOURCES += $(crypto_libpaycoin_crypto_a_SOURCES)
-+libpaycoind_la_SOURCES += $(univalue_libpaycoin_univalue_a_SOURCES)
+ # server: shared between iond and ion-qt
+ libion_server_a_CPPFLAGS = $(BITCOIN_INCLUDES) $(MINIUPNPC_CPPFLAGS)
+ libion_server_a_SOURCES = \
+@@ -309,9 +318,18 @@ nodist_libion_util_a_SOURCES = $(srcdir)/obj/build.h
+ iond_SOURCES = iond.cpp
+ iond_CPPFLAGS = $(BITCOIN_INCLUDES)
+ iond_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
++libiond_la_SOURCES = iond.cpp
++libiond_la_SOURCES += $(libion_util_a_SOURCES)
++libiond_la_SOURCES += $(libion_univalue_a_SOURCES)
++libiond_la_SOURCES += $(libion_crypto_a_SOURCES)
++libiond_la_SOURCES += $(libion_common_a_SOURCES)
++libiond_la_SOURCES += $(libion_server_a_SOURCES)
++libiond_la_SOURCES += $(crypto_libion_crypto_a_SOURCES)
++libiond_la_SOURCES += $(univalue_libion_univalue_a_SOURCES)
 
  if TARGET_WINDOWS
- paycoind_SOURCES += paycoind-res.rc
-+libpaycoind_la_SOURCES += paycoind-res.rc
+ iond_SOURCES += iond-res.rc
++libiond_la_SOURCES += iond-res.rc
  endif
 
- paycoind_LDADD = \
+ iond_LDADD = \
 @@ -328,7 +346,15 @@ if ENABLE_WALLET
- paycoind_LDADD += libpaycoin_wallet.a
+ iond_LDADD += libion_wallet.a
  endif
 
 +MEMOBJ = helpers/memenv/memenv.lo
 +$(MEMOBJ):
 +	@echo "Building the Memenv shared library..." && $(MAKE) -C ./leveldb $@
 +
- paycoind_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS)
-+libpaycoind_la_LIBADD = $(BOOST_LIBS) $(SSL_LIBS) $(LIBSECP256K1) $(CRYPTO_LIBS) leveldb/$(MEMOBJ)
-+libpaycoind_la_CPPFLAGS = $(BITCOIN_INCLUDES)
-+libpaycoind_la_LDFLAGS = -lleveldb -L./leveldb $(RELDFLAGS) -no-undefined
-+libpaycoind_la_DEPENDENCIES = $(LIBSECP256K1) LIBLEVELDB_SHARED $(MEMOBJ)
+ iond_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS)
++libiond_la_LIBADD = $(BOOST_LIBS) $(SSL_LIBS) $(LIBSECP256K1) $(CRYPTO_LIBS) leveldb/$(MEMOBJ)
++libiond_la_CPPFLAGS = $(BITCOIN_INCLUDES)
++libiond_la_LDFLAGS = -lleveldb -L./leveldb $(RELDFLAGS) -no-undefined
++libiond_la_DEPENDENCIES = $(LIBSECP256K1) LIBLEVELDB_SHARED $(MEMOBJ)
  #
 
- # paycoin-cli binary #
-diff --git a/src/paycoind.cpp b/src/paycoind.cpp
+ # ion-cli binary #
+diff --git a/src/iond.cpp b/src/iond.cpp
 index cce687a..0f162ff 100644
---- a/src/paycoind.cpp
-+++ b/src/paycoind.cpp
+--- a/src/iond.cpp
++++ b/src/iond.cpp
 @@ -33,6 +33,10 @@
 
  static bool fDaemon;

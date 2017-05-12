@@ -1,9 +1,9 @@
 /**
- * paycoind.js
+ * iond.js
  * Copyright (c) 2014, BitPay (MIT License)
  *
- * paycoindjs.h:
- *   A paycoind node.js binding header file.
+ * iondjs.h:
+ *   A iond node.js binding header file.
  */
 #include "nan.h"
 #include "addrman.h"
@@ -13,7 +13,7 @@
 #include <boost/thread.hpp>
 #include <boost/filesystem.hpp>
 
-NAN_METHOD(StartPaycoind);
+NAN_METHOD(StartIond);
 NAN_METHOD(IsStopping);
 NAN_METHOD(IsStopped);
-NAN_METHOD(StopPaycoind);
+NAN_METHOD(StopIond);

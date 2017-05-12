@@ -1,23 +1,23 @@
 #!/usr/bin/env node
 
 /**
- * paycoind.js example
+ * iond.js example
  */
 
-process.title = 'paycoind_stripped.js';
+process.title = 'iond_stripped.js';
 
 /**
- * paycoind
+ * iond
  */
 
-var paycoind = require('../index_stripped.js')({
-  directory: '~/.libpaycoind-example'
+var iond = require('../index_stripped.js')({
+  directory: '~/.libiond-example'
 });
 
-paycoind.on('error', function(err) {
-  paycoind.log('error="%s"', err.message);
+iond.on('error', function(err) {
+  iond.log('error="%s"', err.message);
 });
 
-paycoind.on('open', function(status) {
-  paycoind.log('status="%s"', status);
+iond.on('open', function(status) {
+  iond.log('status="%s"', status);
 });

@@ -1,15 +1,15 @@
 {
   'targets': [{
-    'target_name': 'paycoindjs',
+    'target_name': 'iondjs',
     'include_dirs' : [
       '<!(node -e "require(\'nan\')")',
       '/usr/include/boost',
       '/usr/local/include',
-      './libpaycoind/src/leveldb/include',
-      './libpaycoind/src',
+      './libiond/src/leveldb/include',
+      './libiond/src',
     ],
     'sources': [
-      './src/paycoindjs.cc',
+      './src/iondjs.cc',
     ],
     'conditions': [
         ['OS=="mac"', {

@@ -1,15 +1,15 @@
 'use strict';
 
 var benchmark = require('benchmark');
-var paycoin = require('paycoin');
+var ion = require('ion');
 var async = require('async');
 var maxTime = 20;
 
-console.log('Benchmarking Paycoind.js native interface versus Paycoind JSON RPC interface');
+console.log('Benchmarking Iond.js native interface versus Iond JSON RPC interface');
 console.log('----------------------------------------------------------------------');
 
 // To run the benchmarks a fully synced Bitcore Core directory is needed. The RPC comands
-// can be modified to match the settings in paycoin.conf.
+// can be modified to match the settings in ion.conf.
 
 var fixtureData = {
   blockHashes: [
@@ -26,27 +26,27 @@ var fixtureData = {
   ]
 };
 
-var paycoind = require('../')({
-  directory: '~/.paycoin',
+var iond = require('../')({
+  directory: '~/.ion',
   testnet: true
 });
 
-paycoind.on('error', function(err) {
-  paycoind.log('error="%s"', err.message);
+iond.on('error', function(err) {
+  iond.log('error="%s"', err.message);
 });
 
-paycoind.on('open', function(status) {
-  paycoind.log('status="%s"', status);
+iond.on('open', function(status) {
+  iond.log('status="%s"', status);
 });
 
-paycoind.on('ready', function() {
+iond.on('ready', function() {
 
-  paycoind.log('status="%s"', 'chaintip ready.');
+  iond.log('status="%s"', 'chaintip ready.');
 
-  var client = new paycoin.Client({
+  var client = new ion.Client({
     host: 'localhost',
     port: 18332,
-    user: 'paycoin',
+    user: 'ion',
     pass: 'local321'
   });
 
@@ -57,12 +57,12 @@ paycoind.on('ready', function() {
       var hashesLength = fixtureData.blockHashes.length;
       var txLength = fixtureData.txHashes.length;
 
-      function paycoindGetBlockNative(deffered) {
+      function iondGetBlockNative(deffered) {
         if (c >= hashesLength) {
           c = 0;
         }
         var hash = fixtureData.blockHashes[c];
-        paycoind.getBlock(hash, function(err, block) {
+        iond.getBlock(hash, function(err, block) {
           if (err) {
             throw err;
           }
@@ -71,7 +71,7 @@ paycoind.on('ready', function() {
         c++;
       }
 
-      function paycoindGetBlockJsonRpc(deffered) {
+      function iondGetBlockJsonRpc(deffered) {
         if (c >= hashesLength) {
           c = 0;
         }
@@ -85,12 +85,12 @@ paycoind.on('ready', function() {
         c++;
       }
 
-      function paycoinGetTransactionNative(deffered) {
+      function ionGetTransactionNative(deffered) {
         if (c >= txLength) {
           c = 0;
         }
         var hash = fixtureData.txHashes[c];
-        paycoind.getTransaction(hash, true, function(err, tx) {
+        iond.getTransaction(hash, true, function(err, tx) {
           if (err) {
             throw err;
           }
@@ -99,7 +99,7 @@ paycoind.on('ready', function() {
         c++;
       }
 
-      function paycoinGetTransactionJsonRpc(deffered) {
+      function ionGetTransactionJsonRpc(deffered) {
         if (c >= txLength) {
           c = 0;
         }
@@ -115,22 +115,22 @@ paycoind.on('ready', function() {
 
       var suite = new benchmark.Suite();
 
-      suite.add('paycoind getblock (native)', paycoindGetBlockNative, {
+      suite.add('iond getblock (native)', iondGetBlockNative, {
         defer: true,
         maxTime: maxTime
       });
 
-      suite.add('paycoind getblock (json rpc)', paycoindGetBlockJsonRpc, {
+      suite.add('iond getblock (json rpc)', iondGetBlockJsonRpc, {
         defer: true,
         maxTime: maxTime
       });
 
-      suite.add('paycoind gettransaction (native)', paycoinGetTransactionNative, {
+      suite.add('iond gettransaction (native)', ionGetTransactionNative, {
         defer: true,
         maxTime: maxTime
       });
 
-      suite.add('paycoind gettransaction (json rpc)', paycoinGetTransactionJsonRpc, {
+      suite.add('iond gettransaction (json rpc)', ionGetTransactionJsonRpc, {
         defer: true,
         maxTime: maxTime
       });
@@ -148,7 +148,7 @@ paycoind.on('ready', function() {
     }
   ], function(err) {
     console.log('Finished');
-    paycoind.stop();
+    iond.stop();
     process.exit();
   });
 });
